@@ -5,7 +5,7 @@ const Base = require('./base')
 
 const TYPES = {
   address:    'TreeNode',
-  chunk:      'String',
+  chunk:      'string',
   elements:   'List<TreeNode>',
   index:      'int',
   max:        'int'
@@ -54,26 +54,8 @@ class Builder extends Base {
   package_ (name, actions, block) {
     this._grammarName = name
 
-    this._newBuffer('cs', 'Actions')
-    this._template('cs', 'Actions.cs', { actions, namespace: this._namespace })
-
-    this._newBuffer('cs', 'CacheRecord')
-    this._template('cs', 'CacheRecord.cs', { namespace: this._namespace })
-
-    block()
-  }
-
-  syntaxNodeClass_ () {
-    let name = 'TreeNode'
-
-    this._newBuffer('cs', name)
-    this._template('cs', 'TreeNode.cs', { name, namespace: this._namespace })
-
-    return name
-  }
-
-  grammarModule_ (block) {
-    this._newBuffer('cs', 'Grammar')
+    let bufferName = name.replace(/\./g, '')
+    this._newBuffer('cs', bufferName)
 
     // some pragmas to kill warnings
     this.pragma("warning disable CS1717")
@@ -84,7 +66,24 @@ class Builder extends Base {
     this._line('using System.Text.RegularExpressions')
     this._newline()
 
-    this._line('namespace ' + this._namespace + ' {', false)
+    this._line(`namespace ${this._namespace} {`, false)
+
+    this._template('cs', 'Actions.cs', { actions })
+    this._template('cs', 'CacheRecord.cs')
+
+    block()
+
+    this._line('}', false)
+  }
+
+  syntaxNodeClass_ () {
+    let name = 'TreeNode'
+    this._template('cs', 'TreeNode.cs', { name })
+
+    return name
+  }
+
+  grammarModule_ (block) {
     this._indent(() => {
       this._line('public abstract class Grammar {', false)
       this._indent(() => {
@@ -112,8 +111,8 @@ class Builder extends Base {
         this._newline()
         block()
       })
+      this._line('}',false)
     })
-    this._line('}}', false)
   }
 
   compileRegex_ (charClass, name) {
@@ -125,29 +124,23 @@ class Builder extends Base {
   }
 
   parserClass_ (root) {
-    this._newBuffer('cs', 'ParseError')
-    this._template('cs', 'ParseError.cs', { namespace: this._namespace })
-
     let grammar = this._quote(this._grammarName)
     let name = this._grammarName.replace(/\./g, '')
-    this._newBuffer('cs', name)
-    this._template('cs', 'Parser.cs', { grammar, root, name, namespace: this._namespace })
+
+    this._template('cs', 'Parser.cs', { grammar, root, name })
+    this._template('cs', 'ParseError.cs')
 
     let labels = [...this._labels].sort()
-
-    this._newBuffer('cs', 'Label')
-    this._template('cs', 'Label.cs', { labels, namespace: this._namespace })
+    this._template('cs', 'Label.cs', { labels })
   }
 
   class_ (name, parent, block) {
     this._newline()
-    this._line('namespace ' + this._namespace + ' {', false)
     this._indent(() => {
       this._line('class ' + name + ' : ' + parent + ' {', false)
       this._scope(block, name)
       this._line('}', false)
     })
-    this._line('}', false)
   }
 
   constructor_ (args, block) {

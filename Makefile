@@ -53,7 +53,7 @@ test-all: test-java test-js test-python test-ruby
 test-java: $(test_grammars:%.peg=%/Grammar.java)
 	cd test/java && mvn clean test
 
-DOTNET_SDK?=netcoreapp3.1
+DOTNET_SDK?=net6.0
 test-cs: $(test_grammars:%.peg=%/Grammar.cs)
 	cd test/cs && dotnet test --framework ${DOTNET_SDK}
 

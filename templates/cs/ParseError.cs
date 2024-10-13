@@ -1,8 +1,5 @@
-using System;
-
-namespace {{namespace}} {
     public class ParseError : Exception {
-        public ParseError(String message) : base(message) {
+        public ParseError(string message) : base(message) {
         }
     }
-}
+

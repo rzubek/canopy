@@ -1,30 +1,25 @@
-using System.Collections.Generic;
-using System.Collections;
-using System;
-
-namespace {{namespace}} {
     public class {{name}} : Grammar {
-        public {{name}}(String input, Actions actions) {
+        public {{name}}(string input, Actions actions) {
             this.input = input;
             this.inputSize = input.Length;
             this.actions = actions;
             this.offset = 0;
             this.cache = new Dictionary<Label, Dictionary<int, CacheRecord>>();
             this.failure = 0;
-            this.expected = new List<String[]>();
+            this.expected = new List<string[]>();
         }
 
-        public static TreeNode parse(String input, Actions actions) {
+        public static TreeNode parse(string input, Actions actions) {
             {{name}} parser = new {{name}}(input, actions);
             return parser.parse();
         }
 
-        public static TreeNode parse(String input){
+        public static TreeNode parse(string input){
             return parse(input, null);
         }
 
-        private static String formatError(String input, int offset, List<String[]> expected) {
-            String[] lines = input.Split('\n');
+        private static string formatError(string input, int offset, List<string[]> expected) {
+            string[] lines = input.Split('\n');
             int lineNo = 0, position = 0;
 
             while (position <= offset) {
@@ -32,14 +27,14 @@ namespace {{namespace}} {
                 lineNo += 1;
             }
 
-            String line = lines[lineNo - 1];
-            String message = "Line " + lineNo + ": expected one of:\n\n";
+            string line = lines[lineNo - 1];
+            string message = "Line " + lineNo + ": expected one of:\n\n";
 
-            foreach (String[] pair in expected) {
+            foreach (string[] pair in expected) {
                 message += "    - " + pair[1] + " from " + pair[0] + "\n";
             }
 
-            String number = "" + lineNo;
+            string number = "" + lineNo;
             while (number.Length < 6) number = " " + number;
             message += "\n" + number + " | " + line + "\n";
 
@@ -59,9 +54,8 @@ namespace {{namespace}} {
             }
             if (expected.Count <= 0) {
                 failure = offset;
-                expected.Add(new String[] { {{{grammar}}}, "<EOF>" });
+                expected.Add(new string[] { {{{grammar}}}, "<EOF>" });
             }
             throw new ParseError(formatError(input, failure, expected));
         }
     }
-}

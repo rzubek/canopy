@@ -1,10 +1,5 @@
-using System.Collections.Generic;
-using System.Collections;
-using System;
-
-namespace {{namespace}} {
     public class {{name}} : IEnumerable<{{name}}> {
-        public String text;
+        public string text;
         public int offset;
         public List<{{name}}> elements;
 
@@ -12,7 +7,7 @@ namespace {{namespace}} {
 
         public {{name}}() : this("", -1, new List<{{name}}>(0)) {}
 
-        public {{name}}(String text, int offset, List<{{name}}> elements) {
+        public {{name}}(string text, int offset, List<{{name}}> elements) {
             this.text = text;
             this.offset = offset;
             this.elements = elements;
@@ -41,4 +36,3 @@ namespace {{namespace}} {
             return GetEnumerator();
         }
     }
-}

@@ -1,5 +1,3 @@
-namespace {{namespace}} {
-
     public class CacheRecord {
         public TreeNode node;
         public int tail;
@@ -9,4 +7,3 @@ namespace {{namespace}} {
             this.tail = tail;
         }
     }
-}
